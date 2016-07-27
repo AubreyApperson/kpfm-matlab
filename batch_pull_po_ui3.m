@@ -37,14 +37,14 @@ horz_res = str2double(x);
 clear vars x
 % we are now finished grabbing the inputs
 %% 
-cd(path);
+cd(path); % change directory back to where we started
 strut = dir('*.txt');
 len = length(strut);
 
 
 %% time warning
 if (len>=50)
-    time = len*0.5;
+    time = len*0.5/60;
     f = warndlg(strcat('You have more than 50 items, this could take more than  ', num2str(time), ' min at 0.5 seconds per item.'),'Caution');
     waitfor(f);
     pause(.01);
@@ -56,10 +56,26 @@ master = zeros(horz_res, vert_res, len); % create an array to hold all the matri
 names = cell(1,len); % create an array to hold all the image names
 for i = 1:len
     fprintf('Extracting %s \n', strut(i,1).name);
-    [a1,a2] = pull_po3(strut(i,1).name, horz_res, tab_iter); %a1 returns with matrix
+    try
+        [a1,a2] = pull_po3(strut(i,1).name, horz_res, tab_iter); %a1 returns with matrix
+    catch ME
+        if (strcmp(ME.identifier,'MATLAB:badsubscript')) % catch an error and suggest to the user the cause
+            f = errordlg('There appears to be a .txt igor file with a different number of columns.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po_ui3: scan points error');
+            waitfor(f)
+            rethrow(ME)
+        end
+    end
     a2 = strcat(a2);
     names(i) = a2; % add the name to the cell array 'names'
-    master(:,:,i) = a1;
+    try 
+        master(:,:,i) = a1;
+    catch ME
+        if (strcmp(ME.identifier,'MATLAB:subsassigndimmismatch')) % catch an error and suggest to the user the cause
+            f = errordlg('There appears to be a .txt igor file with a different number of rows.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po_ui3: scan lines error');
+            waitfor(f)
+            rethrow(ME)
+        end
+    end
     fprintf('Done\n')
     pause(0.01)
 end
