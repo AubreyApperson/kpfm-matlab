@@ -75,6 +75,11 @@ for i = 1:len
             waitfor(f)
             rethrow(ME)
         end
+        if (strcmp(ME.identifier,'MATLAB:load:numColumnsNotSame')) % catch an error and suggest to the user the cause
+            f = errordlg('There appears to be a .txt igor file with an inconsistent number of columns.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in batch_pull_ui: scan columns error');
+            waitfor(f)
+            rethrow(ME)
+        end
     end
     fprintf('Done\n')
     pause(0.01)
