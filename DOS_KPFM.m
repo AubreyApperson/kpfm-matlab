@@ -18,9 +18,9 @@ pointAy = 5;
 square = 1;  % average the point A with sides of length "square" w/ the point in the upper left
 V_start = 10; % starting voltage in kpfm sweep
 V_end = -100;
+name_output = 'datapointA';
 
 %% import data using batch_pull_poX
-% Comment out the line below after variables are loaded (assuming workspace
 % line below runs only if A, B, or len does not exist to prevent having to
 % reimport variables and take up lots of time. Use clearvars to clear all
 % variables if necessary.
@@ -32,7 +32,7 @@ end
 V = linspace(V_start,V_end, len); % create array for gate bias
 % find data for point A: uses data_std.m file/function
 
-try % grab the data for point A and check to make sure it is inside the data set
+try % grab the data for point A (out of the A matrix) and check to make sure it is inside the data set
     [dataA, stdA] = data_std(A, square, len, pointAx, pointAy);
 catch ME
     if (strcmp(ME.identifier,'MATLAB:badsubscript')) % catch an error and suggest to the user the cause
@@ -48,7 +48,7 @@ end
 Vg_CPD(:,1) = V; % correct names to confirm
 Vg_CPD(:,2) = dataA;
 
-%disp(Vg_CPD(1:21,:))  % we don't actually need to see the data... comment it out.
+%disp(Vg_CPD(1:21,:))  % we don't actually need to see the data... commented out.
 %% Calculate DOS
 dSP = diff(Vg_CPD(1:n+1,2));
 dVg = diff(Vg_CPD(1:n+1,1));
@@ -56,6 +56,7 @@ prefactor = C_ox/(d_org*q^2)*(1.6e-10);
 DOS = prefactor*(((dSP./dVg).^(-1))-1);
 
 %% Plot Data
+%set(gca, 'fontsize', 15) %change font size if necessary
 scatter(Vg_CPD(1:n,2),DOS,'filled')
 title('Plot of DOS??')
 %xlabel('')
@@ -65,3 +66,17 @@ scatter(Vg_CPD(1:n,1),Vg_CPD(1:n,2),'filled')
 title('Plot of Normalized Data??') 
 %xlabel('')
 %ylabel('')
+
+%% Output to file
+% create file name
+%NOTE: Output file will save beside this file (in whatever directory we are
+%currently in)
+nameoutput = strcat('C:\Documents and Settings\computation\Desktop\', name_output);
+name_output = strcat(name_output, '.rtf'); %technically .txt but using rtf to differentiate from imported data
+fid=fopen(name_output,'a'); % open/create file with w=(over)write permission a=append permission
+fprintf(fid, 'This is surface potential data for position (%3.0f,%3.0f)', [pointAx pointAy]);
+fprintf(fid, [ '\ngate bias' '\t' 'surface potential' '\t' 'standard deviation (for square averaging)' '\n']);
+for i = 1:n % if you want all the data points, change 'n' to 'len'
+    fprintf(fid, '%3.3f \t %3.20f \t %3.5f \n', [V(i) dataA(i) stdA(i)]);
+end
+fclose(fid);  % close the file from memory
