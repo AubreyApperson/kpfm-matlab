@@ -73,7 +73,12 @@ title('Plot of Normalized Data??')
 % create file name
 %NOTE: Output file will save beside this file (in whatever directory we are
 %currently in)
+%To output to a new directory, uncomment and change the following line to
+%the requested folder path
+cd('C:\Documents and Settings\computation\Desktop')
 name_output = strcat(name_output, '.rtf'); %technically .txt but using rtf to differentiate from imported data
+fprintf('Output file going to \n %s\\%s \n', pwd, name_output) 
+
 fid=fopen(name_output,'a'); % open/create file with w=(over)write permission a=append permission
 fprintf(fid, 'This is surface potential data for position (%3.0f,%3.0f)', [pointAx pointAy]);
 fprintf(fid, [ '\ngate bias' '\t' 'surface potential' '\t' 'standard deviation (for square averaging)' '\n']);
