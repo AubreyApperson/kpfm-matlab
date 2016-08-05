@@ -1,4 +1,6 @@
 % calculate the DOS info from a KPFM voltage bias run
+% prgram will load necessary files from igor .txt files
+% This work supported by NSF Career Award DMR -1056861.
 
 clearvars -except A B len % reset all variables except A, B, and len
 close all % close any open plots
@@ -25,7 +27,7 @@ name_output = 'datapointA';
 % reimport variables and take up lots of time. Use clearvars to clear all
 % variables if necessary.
 if (exist('A', 'var')==0) || (exist('B', 'var')==0) || (exist('len', 'var')==0)  % run this code only if A, B, or len does not exist
-    [A,B,len] = batch_pull_po_ui3();  
+    [A,B,len] = batch_pull_po_ui();  
 end
 
 %% Find desired point in Data set (A)
@@ -48,7 +50,7 @@ end
 Vg_CPD(:,1) = V; % correct names to confirm
 Vg_CPD(:,2) = dataA;
 
-%disp(Vg_CPD(1:21,:))  % we don't actually need to see the data... commented out.
+%disp(Vg_CPD(1:21,:))  % we don't actually need to see the data?... commented out.
 %% Calculate DOS
 dSP = diff(Vg_CPD(1:n+1,2));
 dVg = diff(Vg_CPD(1:n+1,1));
@@ -71,7 +73,6 @@ title('Plot of Normalized Data??')
 % create file name
 %NOTE: Output file will save beside this file (in whatever directory we are
 %currently in)
-nameoutput = strcat('C:\Documents and Settings\computation\Desktop\', name_output);
 name_output = strcat(name_output, '.rtf'); %technically .txt but using rtf to differentiate from imported data
 fid=fopen(name_output,'a'); % open/create file with w=(over)write permission a=append permission
 fprintf(fid, 'This is surface potential data for position (%3.0f,%3.0f)', [pointAx pointAy]);
