@@ -1,4 +1,4 @@
-function [ po_re, po_name ] = pull_po3( filename, horz_res, tab_iter)
+function [ po_re, po_name ] = pull_po( filename, horz_res, tab_iter)
 %pull_po For mass importing sections of matricies from .txt files (tab
 %delimited) from igor.
 %   This program seperates the wanted tab of data (from the igor exported 
@@ -6,6 +6,8 @@ function [ po_re, po_name ] = pull_po3( filename, horz_res, tab_iter)
 %   the tab the data you want is on in igor.  vert_res referes to the
 %   number of lines the image was taken with.
 
+% This work supported by NSF Career Award DMR -1056861.
+%% Begin Code
 % format long  % should a high precision be needed, uncomment this command
 %% Seperate out the wanted data
 t = load(filename);

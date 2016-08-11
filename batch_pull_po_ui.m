@@ -1,12 +1,19 @@
-function [ master, names, num_images ] = batch_pull_po_ui3()
-%batch_pull_po_ui Function Does the same as batch_pull_po but with a UI 
-%instead of being all command line
+function [ master, names, num_images ] = batch_pull_po_ui()
+%batch_pull_po_ui Function Does the same as batch_pull_po but with a UI
+%rather than being all command line based
+% Function extracts a folders .txt data into MatLab
+%   Master contains all the matricies, names contains the names of the 
+%   files that have been added, num_images is exactly what you think it is.
+%% dependacies
+    % pull_po()
 %It extracts a folders .txt data into MatLab using pull_po()
-%   See notes on pull_po2(), this is an addition to that that does that for
+%   See notes on pull_po(), this is an addition to that that does that for
 %   an entire folder and names things appropriately.
 %example batch_pull_po('C:\Documents and Settings\computation\Desktop\testfolder', 512, 10)
 
-%%
+% This work supported by NSF Career Award DMR -1056861.
+
+%% Begin Code
 waitfor(msgbox('The entire folder you select next prompt will be added to the workspace.  Be sure only the neccesary files are in the folder.','Caution: This may take awhile'));
 pause(.01);
 
@@ -57,10 +64,10 @@ names = cell(1,len); % create an array to hold all the image names
 for i = 1:len
     fprintf('Extracting %s \n', strut(i,1).name);
     try
-        [a1,a2] = pull_po3(strut(i,1).name, horz_res, tab_iter); %a1 returns with matrix
+        [a1,a2] = pull_po(strut(i,1).name, horz_res, tab_iter); %a1 returns with matrix
     catch ME
         if (strcmp(ME.identifier,'MATLAB:badsubscript')) % catch an error and suggest to the user the cause
-            f = errordlg('There appears to be a .txt igor file with a different number of columns.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po_ui3: scan points error');
+            f = errordlg('There appears to be a .txt igor file with a different number of columns.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po: scan points error');
             waitfor(f)
             rethrow(ME)
         end
@@ -71,7 +78,7 @@ for i = 1:len
         master(:,:,i) = a1;
     catch ME
         if (strcmp(ME.identifier,'MATLAB:subsassigndimmismatch')) % catch an error and suggest to the user the cause
-            f = errordlg('There appears to be a .txt igor file with a different number of rows.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po_ui3: scan lines error');
+            f = errordlg('There appears to be a .txt igor file with a different number of rows.  Make sure all the tune igor files have been removed.  Also, verify all data was taken at the same resolution. Remove all files that do not conform to this and re-run the program.', 'Error in pull_po: scan lines error');
             waitfor(f)
             rethrow(ME)
         end
